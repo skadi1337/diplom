@@ -1,0 +1,74 @@
+import cv2
+import numpy as np
+
+image_width = 640
+image_height = 640
+
+with open('C:\\Users\\USER\\Desktop\\diplom\\konturs\\tiles5\\tile-coordinates.txt', 'r') as file:
+    lines = file.readlines()
+
+values = lines[0].split()
+LAT_DELTA = float(values[0]) / 2
+LON_DELTA = float(values[1]) / 2
+
+
+#LAT_DELTA = 0.00343322753 / 2
+#LON_DELTA = 0.00277269925 / 2
+
+tiles = []
+
+for line in lines[1:]:
+    values = line.split()
+    tiles.append((float(values[1]), float(values[2])))
+
+
+
+with open('C:\\Users\\USER\\Desktop\\diplom\\konturs\\tiles res\\result_filtered_ai.txt', 'r') as file:
+    lines = file.readlines()
+
+contours = [[] for i in range(len(tiles))]
+
+for line in lines:
+    values = line.split()
+    number = int(values[0])
+    
+    coordinates = [(float(values[1:][i]), float(values[1:][i+1])) for i in range(0, len(values[1:]), 2)]
+
+    contours[number].append(coordinates)
+
+for i in range(len(tiles)):
+    center_x = tiles[i][0]
+    center_y = tiles[i][1]
+
+    # Координаты левого верхнего и правого нижнего углов изображения
+    left_top_x = center_x - LAT_DELTA
+    left_top_y = center_y + LON_DELTA
+    right_bottom_x = center_x + LAT_DELTA
+    right_bottom_y = center_y - LON_DELTA
+
+    # Создание черного изображения
+    image = np.zeros((image_height, image_width), dtype=np.uint8)
+
+    #contour = '33.13248323703591 36.13724381072946 33.13247250819988 36.13721348433141 33.13257443214218 36.137079181711485 33.132601254232256 36.13697953783219 33.132670991666465 36.13691022035094 33.1327514579367 36.13687556161032 33.133084051853665 36.13686256458258 33.13312696719779 36.13687556161032 33.133094780689696 36.13698387017477 33.13315378928787 36.13688422629547 33.13322352672207 36.13684090286969 33.13328789973826 36.13668493853688 33.13335227275444 36.136693603222035 33.13330935741032 36.13667194150914 33.1333361795004 36.1365419712318 33.13338445926254 36.136533306546646 33.13338445926254 36.13659829168532 33.1334381034427 36.13654630357438 33.13351320529492 36.13660695637047 33.133529298548964 36.13659829168532 33.13348638320484 36.13651597717633 33.13337909484452 36.13652030951891 33.13339518809857 36.136468321407975 33.13342201018865 36.1364639890654 33.13349711204087 36.13651164483375 33.133588307147136 36.13651164483375 33.13354539180301 36.13648998312086 33.13356148505706 36.13639900392672 33.13360440040118 36.13637300987126 33.133615129237214 36.136308024732585 33.133588307147136 36.136308024732585 33.13351320529492 36.1364639890654 33.13341664577064 36.13645099203766 33.1334059169346 36.136403336269304 33.13357221389309 36.136074078233364 33.1336795022534 36.136113069316565 33.133625858073245 36.13626903364938 33.13370632434348 36.1361260663443 33.13382434153982 36.13614339571461 33.13373851085157 36.13603508715016 33.13373851085157 36.13601342543727 33.133770697359665 36.13601342543727 33.13378679061371 36.136048084177894 33.1338511636299 36.13607841057594 33.13384579921188 36.13614772805719 33.133722417597525 36.13634701581579 33.133577578311105 36.13667627385172 33.133481018786824 36.13679757944391 33.13345956111476 36.13692754972126 33.133325450664366 36.13717449324821 33.1333361795004 36.137209151988834 33.13327180648421 36.13723947838688 33.133277170902225 36.13717449324821 33.13329862857429 36.13716149622047 33.133046500927556 36.13706618468375 33.132890932805104 36.13738677803453'
+    #contour_list = contour.split()
+
+    #contour_data = [(float(contour_list[i]), float(contour_list[i+1])) for i in range(0, len(contour_list), 2)]
+
+    contour_data = contours[i]
+
+    for contour in contour_data:
+        scaled_contours = []
+        for x, y in contour:
+            x_scaled = int((x - left_top_x) / (right_bottom_x - left_top_x) * image_width)
+            y_scaled = int((y - left_top_y) / (right_bottom_y - left_top_y) * image_height)
+            scaled_contours.append((x_scaled, y_scaled))
+        
+        cv2.fillPoly(image, np.array([scaled_contours]), 255)
+    
+
+    # Отображение изображения
+    #cv2.imshow('Image', image)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
+    name = 'C:\\Users\\USER\\Desktop\\diplom\\konturs\\masks5\\' + str(i)+'-mask.png'
+    cv2.imwrite(name, image)

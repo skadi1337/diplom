@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Поисковик теплиц</title>
+    
+    
+    <script type="module" crossorigin src="/assets/index-f278251a.js"></script>
+    <link rel="stylesheet" href="/assets/index-1e0bb5db.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="half">
+        <h4>Карта</h4>
+        <div id="roadMap" class="map"></div>
+      </div>
+      <div class="half">
+        <h4>Спутник</h4>
+        <div id="aerialMap" class="map"></div>
+      </div>
+    </div>
+
+    <div id="coordinates"></div>
+
+    <div>
+        <form>
+          <label for="latitude">Широта:</label>
+          <input type="text" id="latitude" name="latitude">
+          <br>
+          <label for="longitude">Долгота:</label>
+          <input type="text" id="longitude" name="longitude">
+          <br>
+          <button type="button" id="showOnMapButton">Показать на карте</button>
+        </form>
+      </div>
+
+
+      <button id="saveMapButton">Сохранить карту</button>
+      <input type="text" id="filePath" placeholder="Попка для сохранения">
+      <a id="RmapDownload" download="Rmap.png"></a>
+      <a id="AmapDownload" download="Amap.png"></a>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    
+  </body>
+</html>
